@@ -408,3 +408,48 @@ def change_class_id(folder_path):
             with open(filepath, 'w') as file:
                 file.writelines(modified_lines)
 
+def dataframe_summary(df):
+    # Extend the dictionary to hold the count of unique values
+    results = {"Min": {}, "Mean": {}, "Mode": {}, "Unique Values": {}}
+
+    # Iterate over each column in the dataframe
+    for column in df.columns:
+        # Unique values count for all columns
+        results["Unique Values"][column] = df[column].nunique()
+
+        # Check if the column is numeric to calculate mean
+        if pd.api.types.is_numeric_dtype(df[column]):
+            results["Min"][column] = df[column].min()
+            results["Mean"][column] = df[column].mean()
+        else:
+            # For non-numeric columns, min and mean are not applicable or meaningful
+            results["Min"][column] = None
+            results["Mean"][column] = None
+
+        # Calculate mode, taking care to handle multiple modes
+        mode_vals = df[column].mode()
+        if not mode_vals.empty:
+            results["Mode"][column] = mode_vals[0]
+        else:
+            results["Mode"][column] = None
+
+    # Convert the results dictionary to a DataFrame for better presentation
+    summary_df = pd.DataFrame(results)
+    return summary_df
+
+
+def get_image_dimensions(directory):
+    unique_dimensions = set()
+    # List all files in the directory
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        # Check for image file extensions
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+            try:
+                with Image.open(file_path) as img:
+                    # Add image dimensions to the set
+                    unique_dimensions.add(img.size)  # (width, height)
+            except IOError:
+                print(f"Failed to open {filename} as an image.")
+
+        return unique_dimensions

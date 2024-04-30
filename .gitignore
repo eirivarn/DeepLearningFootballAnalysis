@@ -177,3 +177,7 @@ model_keypoints/
 pre_training_ball/
 pre_training_players/
 model_combined/
+tuning_model_keypoints/
+tuning_model_ball/
+tuning_model_players/
+result_video/
